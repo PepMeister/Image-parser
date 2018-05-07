@@ -3,6 +3,8 @@
 import re, urlparse
 import sys
 
+
+
 def urlEncodeNonAscii(b):
     return re.sub('[\x80-\xFF]', lambda c: '%%%02x' % ord(c.group(0)), b)
 
@@ -17,6 +19,8 @@ import urllib
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 
+
+
 def img_save(link, i):
     urllib.urlretrieve(link,  str(i) +"."+ str(link[-3:]))
     print str(i) +"."+ str(link[-3:])
@@ -29,10 +33,16 @@ def parse_imgs(URL):
     tags = soup.findAll('img')
     data = (set(tag['src'] for tag in tags))
 
-    parse_imgs.i = 0           
-    for item in data:
-        img_save(iriToUri(item), parse_imgs.i)
-        parse_imgs.i = parse_imgs.i + 1
+    print str(len(data))+" images found..\n" + "Do you want to continue? [Y/n]"
+    answ = raw_input("-->")
+    if answ == 'Y' or answ == 'y':
+    	print "Downloading.. [Ctrl+C for abort]"
+        parse_imgs.i = 0
+        for item in data:
+            img_save(iriToUri(item), parse_imgs.i)
+            parse_imgs.i = parse_imgs.i + 1
+    else:
+    	print "Abort."
 
 
 def uri_validator(x):
@@ -44,11 +54,12 @@ def uri_validator(x):
 
 
 def main():
-    for param in sys.argv:
-		if uri_validator(param):
-			
-			URL = param
-			parse_imgs(URL)   
+	for param in sys.argv:
+		try:
+			if uri_validator(param):
+				parse_imgs(param)
+		except KeyboardInterrupt:
+			print "\n Abort."
 
 
 if __name__ == "__main__":
