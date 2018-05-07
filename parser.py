@@ -31,15 +31,24 @@ def parse_imgs(URL):
 
     parse_imgs.i = 0           
     for item in data:
-        img_save(iriToUri(item), i)
-        i = i + 1
+        img_save(iriToUri(item), parse_imgs.i)
+        parse_imgs.i = parse_imgs.i + 1
+
+
+def uri_validator(x):
+    try:
+        result = urlparse.urlparse(x)
+        return result.scheme and result.netloc and result.path
+    except:
+        return False
 
 
 def main():
-	for param in sys.argv:
-	    URL = param                #for example: "https://github.com/"
-
-        parse_imgs(URL)   
+    for param in sys.argv:
+		if uri_validator(param):
+			
+			URL = param
+			parse_imgs(URL)   
 
 
 if __name__ == "__main__":
